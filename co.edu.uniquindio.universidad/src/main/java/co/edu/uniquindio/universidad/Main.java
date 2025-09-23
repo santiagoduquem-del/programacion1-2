@@ -1,21 +1,72 @@
 package co.edu.uniquindio.universidad;
 
 
-
 import co.edu.uniquindio.universidad.model.Curso;
 import co.edu.uniquindio.universidad.model.Docente;
 import co.edu.uniquindio.universidad.model.Estudiante;
 import co.edu.uniquindio.universidad.model.Rector;
 import co.edu.uniquindio.universidad.model.Universidad;
 
-
-import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
+    // Objeto Scanner para la entrada de datos
+    private static final Scanner teclado = new Scanner(System.in);
+
+    
+    public static void mostrarMenu() {
+        System.out.println("\n--- MENÚ PRINCIPAL ---");
+        System.out.println("1. Mostrar información del curso de Matemáticas");
+        System.out.println("2. Ver estadísticas del curso");
+        System.out.println("3. Calcular definitiva de un estudiante");
+        System.out.println("4. Mostrar estudiantes destacados (Nota > 4.0)");
+        System.out.println("5. Listar todos los estudiantes, cursos, y docentes");
+        System.out.println("6. Crear un nuevo Estudiante");
+        System.out.println("7. Crear un nuevo Curso");
+        System.out.println("8. Crear un nuevo Docente");
+        System.out.println("9. Crear un nuevo Rector");
+        System.out.println("10. Salir");
+    }
+
+    private static int leerEntero(String mensaje) {
+        int dato = 0;
+        String captura = "";
+        System.out.println(mensaje);
+        captura = teclado.nextLine();
+        try {
+            dato = Integer.parseInt(captura);
+        } catch (NumberFormatException e) {
+            System.out.println("Entrada no válida. Por favor, ingrese un número entero.");
+            return -1;
+        }
+        return dato;
+    }
+
+    public static double leerDoubleConsola(String mensaje) {
+        double dato = 0;
+        String captura = "";
+        System.out.println(mensaje);
+        captura = teclado.nextLine();
+        try {
+            dato = Double.parseDouble(captura);
+        } catch (NumberFormatException e) {
+            System.out.println("Entrada no válida. Por favor, ingrese un número decimal.");
+            return -1.0;
+        }
+        return dato;
+    }
+
+    public static String leerStringConsola(String mensaje) {
+        System.out.println(mensaje);
+        return teclado.nextLine();
+    }
+    // Fin de las funciones reutilizables
+
     public static void main(String[] args) {
+        // Inicialización de objetos
         Rector rector = new Rector("Juan", "Pérez");
         Universidad universidad = new Universidad("Universidad Nacional", rector);
         Docente docente = new Docente("Ana", "Gómez", 45, "ana.gomez@mail.com");
@@ -26,42 +77,23 @@ public class Main {
 
         Curso matematicas = new Curso("Matemáticas", "Segundo", "Grupo A", 4, "Diurna");
 
+        // Agregar estudiantes al curso
         matematicas.agregarEstudiante(estudiante1);
         matematicas.agregarEstudiante(estudiante2);
         matematicas.agregarEstudiante(estudiante3);
 
+        // Agregamos el curso y el docente a la universidad
         universidad.agregarCurso(matematicas);
         universidad.agregarDocente(docente);
         universidad.agregarEstudiante(estudiante1);
         universidad.agregarEstudiante(estudiante2);
         universidad.agregarEstudiante(estudiante3);
 
-        Scanner scanner = new Scanner(System.in);
         boolean continuar = true;
 
         while (continuar) {
-            System.out.println("\n--- MENÚ PRINCIPAL ---");
-            System.out.println("1. Mostrar información del curso de Matemáticas");
-            System.out.println("2. Ver estadísticas del curso");
-            System.out.println("3. Calcular definitiva de un estudiante");
-            System.out.println("4. Mostrar estudiantes destacados (Nota > 4.0)");
-            System.out.println("5. Listar todos los estudiantes, cursos, y docentes");
-            System.out.println("6. Crear un nuevo Estudiante");
-            System.out.println("7. Crear un nuevo Curso");
-            System.out.println("8. Crear un nuevo Docente");
-            System.out.println("9. Crear un nuevo Rector");
-            System.out.println("10. Salir");
-            System.out.print("Seleccione una opción: ");
-
-            int opcion = -1;
-            if (scanner.hasNextInt()) {
-                opcion = scanner.nextInt();
-                scanner.nextLine();
-            } else {
-                System.out.println("Entrada no válida. Por favor, ingrese un número.");
-                scanner.next();
-                continue;
-            }
+            mostrarMenu();
+            int opcion = leerEntero("Seleccione una opción:");
 
             switch (opcion) {
                 case 1:
@@ -78,8 +110,7 @@ public class Main {
                     System.out.println("Nota más baja: " + docente.calcularNotaMenorCurso(matematicas));
                     break;
                 case 3:
-                    System.out.print("\nIngrese el nombre del estudiante para calcular su definitiva: ");
-                    String nombreEstudiante = scanner.nextLine();
+                    String nombreEstudiante = leerStringConsola("Ingrese el nombre del estudiante para calcular su definitiva: ");
                     Estudiante estEncontrado = null;
                     for (Estudiante est : matematicas.getListaEstudiantes()) {
                         if (est.getNombre().equalsIgnoreCase(nombreEstudiante)) {
@@ -122,70 +153,45 @@ public class Main {
                     break;
                 case 6:
                     System.out.println("\n--- Creación de un nuevo Estudiante ---");
-                    System.out.print("Ingrese nombre: ");
-                    String nNombre = scanner.nextLine();
-                    System.out.print("Ingrese apellido: ");
-                    String nApellido = scanner.nextLine();
-                    System.out.print("Ingrese edad: ");
-                    int nEdad = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.print("Ingrese correo: ");
-                    String nCorreo = scanner.nextLine();
-                    System.out.print("Ingrese semestre: ");
-                    String nSemestre = scanner.nextLine();
-                    System.out.print("Ingrese nota 1: ");
-                    double nNota1 = scanner.nextDouble();
-                    System.out.print("Ingrese nota 2: ");
-                    double nNota2 = scanner.nextDouble();
-                    System.out.print("Ingrese nota 3: ");
-                    double nNota3 = scanner.nextDouble();
-                    System.out.print("Ingrese nota 4: ");
-                    double nNota4 = scanner.nextDouble();
-                    System.out.print("Ingrese nota 5: ");
-                    double nNota5 = scanner.nextDouble();
-                    scanner.nextLine();
+                    String nNombre = leerStringConsola("Ingrese nombre: ");
+                    String nApellido = leerStringConsola("Ingrese apellido: ");
+                    int nEdad = leerEntero("Ingrese edad: ");
+                    String nCorreo = leerStringConsola("Ingrese correo: ");
+                    String nSemestre = leerStringConsola("Ingrese semestre: ");
+                    double nNota1 = leerDoubleConsola("Ingrese nota 1: ");
+                    double nNota2 = leerDoubleConsola("Ingrese nota 2: ");
+                    double nNota3 = leerDoubleConsola("Ingrese nota 3: ");
+                    double nNota4 = leerDoubleConsola("Ingrese nota 4: ");
+                    double nNota5 = leerDoubleConsola("Ingrese nota 5: ");
                     Estudiante nuevoEstudiante = new Estudiante(nNombre, nApellido, nEdad, nCorreo, nSemestre, nNota1, nNota2, nNota3, nNota4, nNota5);
                     universidad.agregarEstudiante(nuevoEstudiante);
                     System.out.println("¡Estudiante creado y agregado a la universidad!");
                     break;
                 case 7:
                     System.out.println("\n--- Creación de un nuevo Curso ---");
-                    System.out.print("Ingrese nombre del curso: ");
-                    String cNombre = scanner.nextLine();
-                    System.out.print("Ingrese semestre: ");
-                    String cSemestre = scanner.nextLine();
-                    System.out.print("Ingrese grupo: ");
-                    String cGrupo = scanner.nextLine();
-                    System.out.print("Ingrese creditos: ");
-                    int cCreditos = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.print("Ingrese jornada: ");
-                    String cJornada = scanner.nextLine();
+                    String cNombre = leerStringConsola("Ingrese nombre del curso: ");
+                    String cSemestre = leerStringConsola("Ingrese semestre: ");
+                    String cGrupo = leerStringConsola("Ingrese grupo: ");
+                    int cCreditos = leerEntero("Ingrese creditos: ");
+                    String cJornada = leerStringConsola("Ingrese jornada: ");
                     Curso nuevoCurso = new Curso(cNombre, cSemestre, cGrupo, cCreditos, cJornada);
                     universidad.agregarCurso(nuevoCurso);
                     System.out.println("¡Curso creado y agregado a la universidad!");
                     break;
                 case 8:
                     System.out.println("\n--- Creación de un nuevo Docente ---");
-                    System.out.print("Ingrese nombre: ");
-                    String dNombre = scanner.nextLine();
-                    System.out.print("Ingrese apellido: ");
-                    String dApellido = scanner.nextLine();
-                    System.out.print("Ingrese edad: ");
-                    int dEdad = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.print("Ingrese correo: ");
-                    String dCorreo = scanner.nextLine();
+                    String dNombre = leerStringConsola("Ingrese nombre: ");
+                    String dApellido = leerStringConsola("Ingrese apellido: ");
+                    int dEdad = leerEntero("Ingrese edad: ");
+                    String dCorreo = leerStringConsola("Ingrese correo: ");
                     Docente nuevoDocente = new Docente(dNombre, dApellido, dEdad, dCorreo);
                     universidad.agregarDocente(nuevoDocente);
                     System.out.println("¡Docente creado y agregado a la universidad!");
                     break;
                 case 9:
                     System.out.println("\n--- Creación de un nuevo Rector ---");
-                    System.out.print("Ingrese nombre: ");
-                    String rNombre = scanner.nextLine();
-                    System.out.print("Ingrese apellido: ");
-                    String rApellido = scanner.nextLine();
+                    String rNombre = leerStringConsola("Ingrese nombre: ");
+                    String rApellido = leerStringConsola("Ingrese apellido: ");
                     Rector nuevoRector = new Rector(rNombre, rApellido);
                     universidad.setRector(nuevoRector);
                     System.out.println("¡Rector creado y asignado a la universidad!");
@@ -198,6 +204,6 @@ public class Main {
                     System.out.println("Opción no válida. Por favor, intente de nuevo.");
             }
         }
-        scanner.close();
+        teclado.close();
     }
 }
