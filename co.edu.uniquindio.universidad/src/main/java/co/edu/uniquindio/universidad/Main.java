@@ -1,209 +1,452 @@
 package co.edu.uniquindio.universidad;
 
+import co.edu.uniquindio.universidad.model.*;
 
-import co.edu.uniquindio.universidad.model.Curso;
-import co.edu.uniquindio.universidad.model.Docente;
-import co.edu.uniquindio.universidad.model.Estudiante;
-import co.edu.uniquindio.universidad.model.Rector;
-import co.edu.uniquindio.universidad.model.Universidad;
-
-import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
 
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
+    public static void main(String[] args) {
 
-    // Objeto Scanner para la entrada de datos
-    private static final Scanner teclado = new Scanner(System.in);
+        Universidad universidad = inicializarDatos();
 
-    
+        Estudiante estudiante = universidad.getListaEstudiantes().get(0);
+        estudiante.getOwnedByUniversidad();
+        calcularDefinitivaEstudiante(universidad);
+
+        int opcion = 0;
+        do {
+            mostrarMenu();
+            opcion = leerEntero("Ingrese la opción del menú");
+            switch (opcion) {
+                case 1:
+                    String resultado = crearEstudiante(universidad);
+                    System.out.println("Información del estudiante: " + resultado);
+                    break;
+                case 2:
+                    obtenerEstudiante(universidad);
+                    break;
+                case 3:
+                    actualizarEstudiante(universidad);
+                    break;
+                case 4:
+                    eliminarEstudiante(universidad);
+                    break;
+                case 5:
+                    String resultado2 = crearDocente(universidad);
+                    System.out.println("Información del docente: " + resultado2);
+                    break;
+                case 6:
+                    obtenerDocente(universidad);
+                    break;
+                case 7:
+                    actualizarDocente(universidad);
+                    break;
+                case 8:
+                    eliminarDocente(universidad);
+                    break;
+                case 9:
+                    String resultado3 = crearCurso(universidad);
+                    System.out.println("Información del curso: " + resultado3);
+                    break;
+                case 10:
+                    obtenerCurso(universidad);
+                    break;
+                case 11:
+                    actualizarCurso(universidad);
+                    break;
+                case 12:
+                    eliminarCurso(universidad);
+                    break;
+                case 13:
+                    String resultado4 = crearRector(universidad);
+                    System.out.println("Información del rector: " + resultado4);
+                    break;
+                case 14:
+                    obtenerRector(universidad);
+                    break;
+                case 15:
+                    actualizarRector(universidad);
+                    break;
+                case 16:
+                    eliminarRector(universidad);
+                    break;
+                case 00:
+                    System.out.println("Saliendo...");
+                    break;
+                default:
+                    System.out.println("Opción no válida. Intente nuevamente.");
+            }
+        } while (opcion != 00);
+
+    }
+
+    private static void calcularDefinitivaEstudiante(Universidad universidad) {
+        String cedulaDocente = "1094";
+        universidad.calcularDefinitivaEstudiante(cedulaDocente);
+    }
+
+    private static String crearEstudiante(Universidad universidad) {
+        // Ahora solicita los datos por consola
+        String nombre = leerCadena("Ingrese el nombre:");
+        String apellido = leerCadena("Ingrese el apellido:");
+        String identificacion = leerCadena("Ingrese la identificación:");
+        int edad = leerEntero("Ingrese la edad:");
+        double nota1 = leerDouble("Ingrese la nota 1:");
+        double nota2 = leerDouble("Ingrese la nota 2:");
+        double nota3 = leerDouble("Ingrese la nota 3:");
+
+        boolean resultado = universidad.crearEstudiante(
+                nombre, apellido, identificacion, edad, nota1, nota2, nota3
+        );
+
+        if (resultado) {
+            System.out.println("Estudiante creado exitosamente.");
+        } else {
+            System.out.println("No se puede crear el estudiante porque ya hay uno con la misma identificación.");
+        }
+        return String.format("%s %s | ID: %s | Edad: %d | Notas: %.2f, %.2f, %.2f",
+                nombre, apellido, identificacion, edad, nota1, nota2, nota3);
+    }
+
+
+
+    private static void eliminarEstudiante(Universidad universidad) {
+        String identificacion = leerCadena("Ingrese la identificación del estudiante a eliminar:");
+        boolean eliminado = universidad.eliminarEstudiante(identificacion);
+        if (eliminado) {
+            System.out.println("Estudiante eliminado exitosamente");
+        } else {
+            System.out.println("No se encontró el estudiante con identificación: " + identificacion);
+        }
+    }
+
+    private static void actualizarEstudiante(Universidad universidad) {
+        String identificacion = leerCadena("Ingrese la identificación del estudiante a actualizar:");
+        String nuevoNombre = leerCadena("Ingrese el nuevo nombre:");
+        String nuevoApellido = leerCadena("Ingrese el nuevo apellido:");
+        int nuevaEdad = leerEntero("Ingrese la nueva edad:");
+        double nuevaNota1 = leerDouble("Ingrese la nueva nota 1:");
+        double nuevaNota2 = leerDouble("Ingrese la nueva nota 2:");
+        double nuevaNota3 = leerDouble("Ingrese la nueva nota 3:");
+
+        boolean actualizado = universidad.actualizarEstudiante(
+                identificacion, nuevoNombre, nuevoApellido, nuevaEdad, nuevaNota1, nuevaNota2, nuevaNota3
+        );
+
+        if (actualizado) {
+            System.out.println("Estudiante actualizado exitosamente");
+        } else {
+            System.out.println("No se pudo actualizar. Estudiante no encontrado con identificación: " + identificacion);
+        }
+    }
+
+    private static void obtenerEstudiante(Universidad universidad) {
+        String identificacion = leerCadena("Ingrese la identificación del estudiante a consultar:");
+        Estudiante estudiante = universidad.consultarEstudiante(identificacion);
+        if (estudiante != null) {
+            System.out.printf("Estudiante encontrado:%n");
+            System.out.printf("Nombre: %s %s%n", estudiante.getNombre(), estudiante.getApellido());
+            System.out.printf("ID: %s%n", estudiante.getIdentificacion());
+            System.out.printf("Edad: %d%n", estudiante.getEdad());
+            System.out.printf("Notas: %.2f, %.2f, %.2f%n", estudiante.getNota1(), estudiante.getNota2(), estudiante.getNota3());
+        } else {
+            System.out.printf("No se encontró estudiante con identificación: %s%n", identificacion);
+        }
+    }
+
+    public static String crearDocente(Universidad universidad) {
+        String nombre = leerCadena("Ingrese el nombre del docente:");
+        String apellido = leerCadena("Ingrese el apellido del docente:");
+        String email = leerCadena("Ingrese el email:");
+        String identificacion = leerCadena("Ingrese la identificación del docente (identificador único):");
+        int edad = leerEntero("Ingrese la edad del docente:");
+
+        boolean creado = universidad.crearDocente(nombre, apellido, email, identificacion, edad);
+        if (creado) {
+            System.out.println("Docente creado exitosamente.");
+        } else {
+            System.out.println("No se puede crear: ya existe un docente con ese email.");
+        }
+        return String.format("%s %s | ID: %s | Edad: %d", nombre, apellido, identificacion, edad);
+    }
+
+    public static void obtenerDocente(Universidad universidad) {
+        String identificacion = leerCadena("Ingrese la identificacion del docente a consultar:");
+        Docente docente = universidad.consultarDocente(identificacion);
+        if (docente != null) {
+            System.out.printf("Docente encontrado:%n");
+            System.out.printf("Nombre: %s %s%n", docente.getNombre(), docente.getApellido());
+            System.out.printf("Email: %s%n", docente.getEmail());
+            System.out.printf("Edad: %d%n", docente.getEdad());
+        } else {
+            System.out.printf("No se encontró docente con identificación: %s%n", identificacion);
+        }
+    }
+
+    public static void actualizarDocente(Universidad universidad) {
+        String identificacion = leerCadena("Ingrese la identificacion del docente a actualizar:");
+        String nombre = leerCadena("Ingrese el nuevo nombre:");
+        String apellido = leerCadena("Ingrese el nuevo apellido:");
+        String email = leerCadena("Ingrese el nuevo email:");
+        int edad = leerEntero("Ingrese la nueva edad:");
+
+        boolean actualizado = universidad.actualizarDocente(email, nombre, apellido, identificacion, edad);
+        if (actualizado) {
+            System.out.println("Docente actualizado exitosamente.");
+        } else {
+            System.out.println("No se pudo actualizar. Docente no encontrado con identificacion: " + identificacion);
+        }
+    }
+
+    public static void eliminarDocente(Universidad universidad) {
+        String identificacion = leerCadena("Ingrese la identificacion del docente a eliminar:");
+        boolean eliminado = universidad.eliminarDocente(identificacion);
+        if (eliminado) {
+            System.out.println("Docente eliminado exitosamente.");
+        } else {
+            System.out.println("No se encontró docente con email: " + identificacion);
+        }
+    }
+
+    public static String crearCurso(Universidad universidad) {
+        String nombre = leerCadena("Ingrese el nombre del curso:");
+        String semestre = leerCadena("Ingrese el semestre del curso:");
+        String grupo = leerCadena("Ingrese el grupo del curso (identificador único):");
+        String creditos = leerCadena("Ingrese los créditos del curso:");
+        String jornada = leerCadena("Ingrese la jornada del curso:");
+
+        boolean creado = universidad.crearCurso(nombre, semestre, grupo, creditos, jornada);
+        if (creado) {
+            System.out.println("Curso creado exitosamente.");
+        } else {
+            System.out.println("No se puede crear: ya existe un curso con ese grupo.");
+        }
+        return String.format("Nombre: %s | Semestre: %s | Grupo: %s | Creditos: %s | Jornada: %s",
+                nombre, semestre, grupo, creditos, jornada);
+    }
+
+    public static void obtenerCurso(Universidad universidad) {
+        String grupo = leerCadena("Ingrese el grupo del curso a consultar:");
+        Curso curso = universidad.consultarCurso(grupo);
+        if (curso != null) {
+            System.out.printf("Curso encontrado:%n");
+            System.out.printf("Nombre: %s%n", curso.getNombre());
+            System.out.printf("Semestre: %s%n", curso.getSemestre());
+            System.out.printf("Grupo: %s%n", curso.getGrupo());
+            System.out.printf("Créditos: %s%n", curso.getCreditos());
+            System.out.printf("Jornada: %s%n", curso.getJornada());
+        } else {
+            System.out.println("No se encontró curso con el grupo: " + grupo);
+        }
+    }
+
+    public static void actualizarCurso(Universidad universidad) {
+        String grupo = leerCadena("Ingrese el grupo del curso a actualizar (identificador único):");
+        String nombre = leerCadena("Ingrese el nuevo nombre:");
+        String semestre = leerCadena("Ingrese el nuevo semestre:");
+        String creditos = leerCadena("Ingrese los nuevos créditos:");
+        String jornada = leerCadena("Ingrese la nueva jornada:");
+
+        boolean actualizado = universidad.actualizarCurso(grupo, nombre, semestre, creditos, jornada);
+        if (actualizado) {
+            System.out.println("Curso actualizado exitosamente.");
+        } else {
+            System.out.println("No se pudo actualizar. No existe un curso con ese grupo.");
+        }
+    }
+
+    public static void eliminarCurso(Universidad universidad) {
+        String grupo = leerCadena("Ingrese el grupo del curso a eliminar:");
+        boolean eliminado = universidad.eliminarCurso(grupo);
+        if (eliminado) {
+            System.out.println("Curso eliminado exitosamente.");
+        } else {
+            System.out.println("No se encontró curso con el grupo: " + grupo);
+        }
+    }
+
+    public static String crearRector(Universidad universidad) {
+        String nombre = leerCadena("Ingrese el nombre del rector:");
+        String apellido = leerCadena("Ingrese el apellido del rector:");
+        boolean creado = universidad.crearRector(nombre, apellido);
+        if (creado) {
+            System.out.println("Rector creado/asignado exitosamente.");
+        } else {
+            System.out.println("Ya existe un rector asignado. Actualícelo o elimínelo antes de crear uno nuevo.");
+        }
+        return String.format("%s %s", nombre, apellido);
+    }
+
+    public static void obtenerRector(Universidad universidad) {
+        Rector rector = universidad.consultarRector();
+        if (rector != null) {
+            System.out.printf("Rector actual:%n");
+            System.out.printf("Nombre: %s %s%n", rector.getNombre(), rector.getApellido());
+        } else {
+            System.out.println("No hay rector asignado actualmente.");
+        }
+    }
+
+    public static void actualizarRector(Universidad universidad) {
+        String nombre = leerCadena("Ingrese el nuevo nombre del rector:");
+        String apellido = leerCadena("Ingrese el nuevo apellido del rector:");
+        boolean actualizado = universidad.actualizarRector(nombre, apellido);
+        if (actualizado) {
+            System.out.println("Rector actualizado exitosamente.");
+        } else {
+            System.out.println("No hay rector para actualizar. Créalo primero.");
+        }
+    }
+
+    public static void eliminarRector(Universidad universidad) {
+        boolean eliminado = universidad.eliminarRector();
+        if (eliminado) {
+            System.out.println("Rector eliminado exitosamente.");
+        } else {
+            System.out.println("No hay rector asignado para eliminar.");
+        }
+    }
+
+    public static Universidad inicializarDatos() {
+        Universidad universidad = new Universidad();
+        Estudiante e1 = new Estudiante();
+        e1.setNombre("Juan");
+        e1.setApellido("Sanchez");
+        e1.setIdentificacion("1234");
+        e1.setEdad(20);
+        e1.setNota1(5);
+        e1.setNota2(5);
+        e1.setNota3(5);
+        universidad.getListaEstudiantes().add(e1);
+
+        Estudiante e2 = new Estudiante();
+        e2.setNombre("Juan");
+        e2.setApellido("Sanchez");
+        e2.setIdentificacion("12343");
+        e2.setEdad(20);
+        e2.setNota1(5);
+        e2.setNota2(5);
+        e2.setNota3(5);
+        universidad.getListaEstudiantes().add(e2);
+
+        Docente d1 = new Docente();
+        d1.setNombre("Juan");
+        d1.setApellido("Sanchez");
+        d1.setEmail("docente1@email.com");
+        d1.setEdad(20);
+        universidad.getListaDocentes().add(d1);
+
+        Docente d2 = new Docente();
+        d2.setNombre("dsfsdf 3");
+        d2.setApellido("dfsfds 3");
+        d2.setEmail("dsfdsf 3");
+        d2.setEdad(1000);
+        universidad.getListaDocentes().add(d2);
+
+        Docente d3 = new Docente();
+        d3.setNombre("dsfsdf");
+        d3.setApellido("dfsfds");
+        d3.setEmail("dsfdsf");
+        d3.setEdad(20);
+        universidad.getListaDocentes().add(d3);
+
+        Curso c1 = new Curso();
+        c1.setNombre("Curso de Java");
+        c1.setSemestre("5");
+        c1.setGrupo("A");
+        c1.setCreditos("4");
+        c1.setJornada("2");
+        c1.setOwnedByUniversidad(universidad);
+        universidad.getListaCursos().add(c1);
+
+        universidad.getListaEstudiantes().add(e1);
+        universidad.getListaEstudiantes().add(e2);
+        universidad.getListaDocentes().add(d1);
+        return universidad;
+    }
+
     public static void mostrarMenu() {
-        System.out.println("\n--- MENÚ PRINCIPAL ---");
-        System.out.println("1. Mostrar información del curso de Matemáticas");
-        System.out.println("2. Ver estadísticas del curso");
-        System.out.println("3. Calcular definitiva de un estudiante");
-        System.out.println("4. Mostrar estudiantes destacados (Nota > 4.0)");
-        System.out.println("5. Listar todos los estudiantes, cursos, y docentes");
-        System.out.println("6. Crear un nuevo Estudiante");
-        System.out.println("7. Crear un nuevo Curso");
-        System.out.println("8. Crear un nuevo Docente");
-        System.out.println("9. Crear un nuevo Rector");
-        System.out.println("10. Salir");
+        System.out.println("1 - Crear Estudiante");
+        System.out.println("2 - Obtener Estudiante");
+        System.out.println("3 - Actualizar Estudiante");
+        System.out.println("4 - Eliminar Estudiante\n");
+
+        System.out.println("5 - Crear docente");
+        System.out.println("6 - Obtener docente");
+        System.out.println("7 - Actualizar docente");
+        System.out.println("8 - Eliminar docente\n");
+
+        System.out.println("9 - Crear curso");
+        System.out.println("10 - Obtener curso");
+        System.out.println("11 - Actualizar curso");
+        System.out.println("12 - Eliminar curso\n");
+
+        System.out.println("13 - Crear rector");
+        System.out.println("14 - Obtener rector");
+        System.out.println("15 - Actualizar rector");
+        System.out.println("16 - Eliminar rector\n");
+        System.out.println("00 - Salir");
     }
 
     private static int leerEntero(String mensaje) {
         int dato = 0;
         String captura = "";
         System.out.println(mensaje);
+        Scanner teclado = new Scanner(System.in);
         captura = teclado.nextLine();
-        try {
-            dato = Integer.parseInt(captura);
-        } catch (NumberFormatException e) {
-            System.out.println("Entrada no válida. Por favor, ingrese un número entero.");
-            return -1;
-        }
+        dato = Integer.parseInt(captura);
         return dato;
     }
 
-    public static double leerDoubleConsola(String mensaje) {
-        double dato = 0;
-        String captura = "";
+    private static String leerCadena(String mensaje) {
         System.out.println(mensaje);
-        captura = teclado.nextLine();
-        try {
-            dato = Double.parseDouble(captura);
-        } catch (NumberFormatException e) {
-            System.out.println("Entrada no válida. Por favor, ingrese un número decimal.");
-            return -1.0;
-        }
-        return dato;
-    }
-
-    public static String leerStringConsola(String mensaje) {
-        System.out.println(mensaje);
+        Scanner teclado = new Scanner(System.in);
         return teclado.nextLine();
     }
-    // Fin de las funciones reutilizables
 
-    public static void main(String[] args) {
-        // Inicialización de objetos
-        Rector rector = new Rector("Juan", "Pérez");
-        Universidad universidad = new Universidad("Universidad Nacional", rector);
-        Docente docente = new Docente("Ana", "Gómez", 45, "ana.gomez@mail.com");
-
-        Estudiante estudiante1 = new Estudiante("Carlos", "Ruiz", 20, "carlos@mail.com", "Segundo", 4.5, 3.8, 5.0, 4.2, 4.8);
-        Estudiante estudiante2 = new Estudiante("Luisa", "Diaz", 21, "luisa@mail.com", "Segundo", 2.0, 1.5, 3.0, 2.5, 3.0);
-        Estudiante estudiante3 = new Estudiante("Pedro", "López", 22, "pedro@mail.com", "Segundo", 3.5, 4.0, 3.2, 3.8, 4.1);
-
-        Curso matematicas = new Curso("Matemáticas", "Segundo", "Grupo A", 4, "Diurna");
-
-        // Agregar estudiantes al curso
-        matematicas.agregarEstudiante(estudiante1);
-        matematicas.agregarEstudiante(estudiante2);
-        matematicas.agregarEstudiante(estudiante3);
-
-        // Agregamos el curso y el docente a la universidad
-        universidad.agregarCurso(matematicas);
-        universidad.agregarDocente(docente);
-        universidad.agregarEstudiante(estudiante1);
-        universidad.agregarEstudiante(estudiante2);
-        universidad.agregarEstudiante(estudiante3);
-
-        boolean continuar = true;
-
-        while (continuar) {
-            mostrarMenu();
-            int opcion = leerEntero("Seleccione una opción:");
-
-            switch (opcion) {
-                case 1:
-                    System.out.println("\nInformación del Curso:");
-                    System.out.println(matematicas.toString());
-                    System.out.println("Estudiantes inscritos: " + matematicas.getListaEstudiantes());
-                    break;
-                case 2:
-                    System.out.println("\n--- Estadísticas del Curso ---");
-                    System.out.println("Promedio del curso: " + String.format("%.2f", docente.calcularPromedioCurso(matematicas)));
-                    System.out.println("Porcentaje de aprobados: " + String.format("%.2f", docente.calcularPorcentajeGanaronCurso(matematicas)) + "%");
-                    System.out.println("Porcentaje de reprobados: " + String.format("%.2f", docente.calcularPorcentajePerdieronCurso(matematicas)) + "%");
-                    System.out.println("Nota más alta: " + docente.calcularNotaMayorDelCurso(matematicas));
-                    System.out.println("Nota más baja: " + docente.calcularNotaMenorCurso(matematicas));
-                    break;
-                case 3:
-                    String nombreEstudiante = leerStringConsola("Ingrese el nombre del estudiante para calcular su definitiva: ");
-                    Estudiante estEncontrado = null;
-                    for (Estudiante est : matematicas.getListaEstudiantes()) {
-                        if (est.getNombre().equalsIgnoreCase(nombreEstudiante)) {
-                            estEncontrado = est;
-                            break;
-                        }
-                    }
-                    if (estEncontrado != null) {
-                        System.out.println("La nota definitiva de " + estEncontrado.getNombre() + " es: " + String.format("%.2f", docente.calcularDefinitivaEstudiante(estEncontrado)));
-                    } else {
-                        System.out.println("Estudiante no encontrado.");
-                    }
-                    break;
-                case 4:
-                    System.out.println("\n--- Estudiantes con nota mayor a 4.0 ---");
-                    List<Estudiante> destacados = docente.obtenerEstudianteNotasMayor4(matematicas);
-                    if (destacados.isEmpty()) {
-                        System.out.println("No hay estudiantes con nota definitiva superior a 4.0.");
-                    } else {
-                        for (Estudiante est : destacados) {
-                            System.out.println(est.toString() + " - Definitiva: " + String.format("%.2f", docente.calcularDefinitivaEstudiante(est)));
-                        }
-                    }
-                    break;
-                case 5:
-                    System.out.println("\n--- Listado de la Universidad ---");
-                    System.out.println("Rector: " + universidad.getRector().getNombre() + " " + universidad.getRector().getApellido());
-                    System.out.println("\nEstudiantes:");
-                    for (Estudiante est : universidad.getListaEstudiantes()) {
-                        System.out.println(est.toString());
-                    }
-                    System.out.println("\nCursos:");
-                    for (Curso cur : universidad.getListaCursos()) {
-                        System.out.println(cur.toString());
-                    }
-                    System.out.println("\nDocentes:");
-                    for (Docente doc : universidad.getListaDocentes()) {
-                        System.out.println(doc.toString());
-                    }
-                    break;
-                case 6:
-                    System.out.println("\n--- Creación de un nuevo Estudiante ---");
-                    String nNombre = leerStringConsola("Ingrese nombre: ");
-                    String nApellido = leerStringConsola("Ingrese apellido: ");
-                    int nEdad = leerEntero("Ingrese edad: ");
-                    String nCorreo = leerStringConsola("Ingrese correo: ");
-                    String nSemestre = leerStringConsola("Ingrese semestre: ");
-                    double nNota1 = leerDoubleConsola("Ingrese nota 1: ");
-                    double nNota2 = leerDoubleConsola("Ingrese nota 2: ");
-                    double nNota3 = leerDoubleConsola("Ingrese nota 3: ");
-                    double nNota4 = leerDoubleConsola("Ingrese nota 4: ");
-                    double nNota5 = leerDoubleConsola("Ingrese nota 5: ");
-                    Estudiante nuevoEstudiante = new Estudiante(nNombre, nApellido, nEdad, nCorreo, nSemestre, nNota1, nNota2, nNota3, nNota4, nNota5);
-                    universidad.agregarEstudiante(nuevoEstudiante);
-                    System.out.println("¡Estudiante creado y agregado a la universidad!");
-                    break;
-                case 7:
-                    System.out.println("\n--- Creación de un nuevo Curso ---");
-                    String cNombre = leerStringConsola("Ingrese nombre del curso: ");
-                    String cSemestre = leerStringConsola("Ingrese semestre: ");
-                    String cGrupo = leerStringConsola("Ingrese grupo: ");
-                    int cCreditos = leerEntero("Ingrese creditos: ");
-                    String cJornada = leerStringConsola("Ingrese jornada: ");
-                    Curso nuevoCurso = new Curso(cNombre, cSemestre, cGrupo, cCreditos, cJornada);
-                    universidad.agregarCurso(nuevoCurso);
-                    System.out.println("¡Curso creado y agregado a la universidad!");
-                    break;
-                case 8:
-                    System.out.println("\n--- Creación de un nuevo Docente ---");
-                    String dNombre = leerStringConsola("Ingrese nombre: ");
-                    String dApellido = leerStringConsola("Ingrese apellido: ");
-                    int dEdad = leerEntero("Ingrese edad: ");
-                    String dCorreo = leerStringConsola("Ingrese correo: ");
-                    Docente nuevoDocente = new Docente(dNombre, dApellido, dEdad, dCorreo);
-                    universidad.agregarDocente(nuevoDocente);
-                    System.out.println("¡Docente creado y agregado a la universidad!");
-                    break;
-                case 9:
-                    System.out.println("\n--- Creación de un nuevo Rector ---");
-                    String rNombre = leerStringConsola("Ingrese nombre: ");
-                    String rApellido = leerStringConsola("Ingrese apellido: ");
-                    Rector nuevoRector = new Rector(rNombre, rApellido);
-                    universidad.setRector(nuevoRector);
-                    System.out.println("¡Rector creado y asignado a la universidad!");
-                    break;
-                case 10:
-                    continuar = false;
-                    System.out.println("Saliendo del programa. ¡Hasta luego!");
-                    break;
-                default:
-                    System.out.println("Opción no válida. Por favor, intente de nuevo.");
-            }
-        }
-        teclado.close();
+    private static double leerDouble(String mensaje) {
+        System.out.println(mensaje);
+        Scanner teclado = new Scanner(System.in);
+        String captura = teclado.nextLine();
+        return Double.parseDouble(captura);
     }
+
+
+//  private static void imprimirEstudiantes(Universidad universidad) {
+//        System.out.println("\nLista de estudiantes:");
+//        for (Estudiante listaEstudiantes : universidad.getListaEstudiantes()) {
+//            String nombre = listaEstudiantes.getNombre();
+//            String apellido = listaEstudiantes.getApellido();
+//            Integer edad = listaEstudiantes.getEdad();
+//
+//            System.out.printf("- %s %s | Edad: %d%n%n",nombre, apellido, edad);
+//        }
+//    }
+//
+//    private static void imprimirDocentes(Universidad universidad) {
+//        System.out.println("\nLista de docentes:");
+//        for (Docente listaDocentes : universidad.getListaDocentes()) {
+//            String nombre = listaDocentes.getNombre();
+//            String apellido = listaDocentes.getApellido();
+//            String email = listaDocentes.getEmail();
+//            Integer edad = listaDocentes.getEdad();
+//
+//            System.out.printf("- %s %s | Email: %s | Edad: %d%n",nombre, apellido, email, edad);
+//        }
+//    }
+//
+//    private static void imprimirCursos(Universidad universidad) {
+//        System.out.println("\nLista de cursos:");
+//        for (Curso listaCursos : universidad.getListaCursos()) {
+//            String nombre = listaCursos.getNombre();
+//            String semestre = listaCursos.getSemestre();
+//            String grupo = listaCursos.getGrupo();
+//            String creditos = listaCursos.getCreditos();
+//            String jornada = listaCursos.getJornada();
+//
+//            System.out.printf("- %s | Semestre: %s | Grupo: %s | Créditos: %s | Jornada: %s%n",nombre, semestre, grupo, creditos, jornada);
+//        }
+//    }
 }

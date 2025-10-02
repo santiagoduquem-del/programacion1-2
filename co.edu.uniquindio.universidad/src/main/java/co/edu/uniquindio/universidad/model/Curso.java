@@ -1,54 +1,38 @@
 package co.edu.uniquindio.universidad.model;
 
-// Curso.java
-import java.util.ArrayList;
-import java.util.List;
-
 public class Curso {
 
-    private String nombre;
-    private String semestre;
-    private String grupo;
-    private int creditos;
-    private String jornada;
-    private List<Estudiante> listaEstudiantes;
+    String nombre;
+    String semestre;
+    String grupo;
+    String creditos;
+    String jornada;
+    Universidad ownedByUniversidad;
 
-    public Curso(String nombre, String semestre, String grupo, int creditos, String jornada) {
-        this.nombre = nombre;
-        this.semestre = semestre;
-        this.grupo = grupo;
-        this.creditos = creditos;
-        this.jornada = jornada;
-        this.listaEstudiantes = new ArrayList<>();
-    }
+    public Curso() {}
 
-    // Getters
-    public String getNombre() { return nombre; }
-    public String getSemestre() { return semestre; }
-    public String getGrupo() { return grupo; }
-    public int getCreditos() { return creditos; }
-    public String getJornada() { return jornada; }
-    public List<Estudiante> getListaEstudiantes() { return listaEstudiantes; }
+    public String getNombre() {return nombre;}
+    public void setNombre(String nombre) {this.nombre = nombre;}
+    public String getSemestre() {return semestre;}
+    public void setSemestre(String semestre) {this.semestre = semestre;}
+    public String getGrupo() {return grupo;}
+    public void setGrupo(String grupo) {this.grupo = grupo;}
+    public String getCreditos() {return creditos;}
+    public void setCreditos(String creditos) {this.creditos = creditos;}
+    public String getJornada() {return jornada;}
+    public void setJornada(String jornada) {this.jornada = jornada;}
+    public Universidad getOwnedByUniversidad() {return ownedByUniversidad;}
+    public void setOwnedByUniversidad(Universidad ownedByUniversidad) {this.ownedByUniversidad = ownedByUniversidad;}
 
-    // Setters
-    public void setNombre(String nombre) { this.nombre = nombre; }
-    public void setSemestre(String semestre) { this.semestre = semestre; }
-    public void setGrupo(String grupo) { this.grupo = grupo; }
-    public void setCreditos(int creditos) { this.creditos = creditos; }
-    public void setJornada(String jornada) { this.jornada = jornada; }
-    public void setListaEstudiantes(List<Estudiante> listaEstudiantes) { this.listaEstudiantes = listaEstudiantes; }
-
-    public void agregarEstudiante(Estudiante estudiante) {
-        listaEstudiantes.add(estudiante);
-    }
+    //3177638962
 
     @Override
     public String toString() {
-        return "Curso{" +
-                "nombre='" + nombre + '\'' +
-                ", semestre='" + semestre + '\'' +
-                ", grupo='" + grupo + '\'' +
-                ", estudiantes=" + listaEstudiantes.size() +
-                '}';
+        String nom = nombre != null ? nombre : "(sin nombre)";
+        String sem = semestre != null ? semestre : "(sin semestre)";
+        String grp = grupo != null ? grupo : "(sin grupo)";
+        String cred = creditos != null ? creditos : "(sin créditos)";
+        String jorn = jornada != null ? jornada : "(sin jornada)";
+        return String.format("- %s | Semestre: %s | Grupo: %s | Créditos: %s | Jornada: %s", nom, sem, grp, cred, jorn);
     }
 }
